@@ -100,7 +100,8 @@ Create `~/Library/Application Support/Meeting Prompter/intents.json` to override
 ## Privacy
 
 - Captured text stays in memory and is cleared when you end the session. The window snapshot used for picking the caption area is deleted right after you save the area. It is only sent when you press a hotkey, and only to the teammate you selected.
-- A small diagnostics log (`diag.jsonl`) records events such as capture errors and idle periods. It never contains meeting text.
+- `status.json`, `ask-log.jsonl` and `diag.jsonl` in the same folder hold counts, timings and events only (capture errors, idle periods). They never contain meeting text or answers.
+- The developer self-test hook is off unless the app is started with `MEETCUE_DEV=1`.
 
 ## Project layout
 

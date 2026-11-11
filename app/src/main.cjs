@@ -14,6 +14,7 @@ if (!app.requestSingleInstanceLock()) { app.quit(); }
 const bridge = require('./bridge.cjs');
 
 const ROOT = path.resolve(__dirname, '..');
+const DEV = process.env.MEETCUE_DEV === '1';
 const OCR_BIN = fs.existsSync(path.join(process.resourcesPath || '', 'prompter-ocr')) ? path.join(process.resourcesPath, 'prompter-ocr') : path.join(ROOT, 'build/prompter-ocr');
 const settingsFile = () => path.join(app.getPath('userData'), 'settings.json');
 const defaults = { preferredPartner: '', windowApp: '', source: 'ocr', targetId: '', targetLabel: '', windowTitle: '', region: null, intervalMs: 1200, lookbackKey: '3', hideFromShare: true, bounds: null };
@@ -259,8 +260,9 @@ app.whenReady().then(async () => {
   registerShortcuts();
   ocr.ensure();
   setInterval(async () => {
+    // 开发自检：只有用 MEETCUE_DEV=1 启动时才响应，避免其他本机程序借用本应用的屏幕录制权限
     const flag = path.join(app.getPath('userData'), 'selftest.json');
-    if (fs.existsSync(flag)) {
+    if (DEV && fs.existsSync(flag)) {
       let req = {}; try { req = JSON.parse(fs.readFileSync(flag, 'utf8')); } catch {}
       fs.rmSync(flag, { force: true });
       const out = { at: new Date().toISOString() };
@@ -292,7 +294,8 @@ app.whenReady().then(async () => {
     }
     try {
       const st = status(); st.bridge = await bridge.status().catch(e => ({ connected: false, message: e.message }));
-      st.targets = targets.map(t => t.label); st.lastAsk = lastAsk ? { intent: lastAsk.payload.intent, ms: lastAsk.payload.ms, timing: lastAsk.payload.timing, answer: lastAsk.answer.slice(0, 400) } : null;
+      st.targets = targets.map(t => t.label); st.lastAsk = lastAsk ? { intent: lastAsk.payload.intent, ms: lastAsk.payload.ms, timing: lastAsk.payload.timing } : null;
+      delete st.recent; // 状态文件只记计数和耗时，不落盘会议文字
       st.writtenAt = new Date().toISOString();
       fs.writeFileSync(path.join(app.getPath('userData'), 'status.json'), JSON.stringify(st, null, 2), { mode: 0o600 });
     } catch {}
