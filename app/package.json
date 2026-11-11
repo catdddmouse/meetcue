@@ -1,0 +1,17 @@
+{
+  "name": "meetcue",
+  "productName": "MeetCue",
+  "version": "0.1.0",
+  "private": true,
+  "main": "src/main.cjs",
+  "scripts": {
+    "start": "electron .",
+    "test": "node --test test/*.test.cjs",
+    "build": "node build.cjs"
+  },
+  "devDependencies": {
+    "electron": "^38.0.0"
+  },
+  "description": "Floating meeting prompter for macOS: reads live captions by OCR and asks your AI teammate with one hotkey.",
+  "license": "Apache-2.0"
+}

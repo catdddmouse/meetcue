@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' file: data:">
+<title>MeetCue</title>
+<link rel="stylesheet" href="overlay.css">
+</head>
+<body>
+<div id="shell">
+  <header id="bar">
+    <img class="mark" src="logo.svg" alt=""><span id="dot" class="dot idle" title="本场状态"></span>
+    <span class="brand">MeetCue</span>
+    <span class="sep"></span>
+    <span id="chipPartner" class="chip" title="提问对象（option + P 切换）">未选伙伴</span>
+    <span id="chipLookback" class="chip" title="回看时长（option + 0 切换）">3 分钟</span>
+    <span id="chipSource" class="chip muted" title="已读到的字幕行数">0 行</span>
+    <span class="spacer"></span>
+    <button id="btnSettings" class="icon" title="设置"><svg viewBox="0 0 24 24"><path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1Z"/></svg></button>
+    <button id="btnCollapse" class="icon" title="收起面板"><svg viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></button>
+    <button id="btnHide" class="icon" title="隐藏（option + H）"><svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+  </header>
+
+  <div id="panel">
+
+  <div id="notice" hidden></div>
+
+  <section id="card" hidden>
+    <div class="cardHead">
+      <span id="cardIntent">怎么回答</span>
+      <span id="cardMeta" class="muted"></span>
+      <span class="spacer"></span>
+      <span id="cardTimer" class="muted"></span>
+    </div>
+    <div id="answer"></div>
+    <div class="cardFoot">
+      <button id="btnCopy" class="ghost">复制</button>
+      <button id="btnCancel" class="ghost" hidden>取消等待</button>
+    </div>
+  </section>
+
+  <div id="intentRow" class="quick"></div>
+
+  <section id="keytest" hidden>
+    <div class="ktTitle">按键测试中 · 不会发给伙伴</div>
+    <div id="ktLocal" class="ktBig">先点一下这个浮窗，再按键盘上的键</div>
+    <div id="ktGlobal" class="ktHint">然后试：按住 option 再按 1</div>
+    <div class="row"><span class="spacer"></span><button id="btnKtDone" class="primary">测试完成</button></div>
+  </section>
+
+  <section id="settings" hidden>
+    <div class="group">
+      <div class="gTitle">① Cindy 伙伴</div>
+      <div class="row"><span id="bridgeState" class="muted">检查中…</span><span class="spacer"></span><button id="btnConnect">连接 Cindy</button></div>
+      <div id="pairBox" class="hint" hidden></div>
+      <div class="row"><label>提问对象</label><select id="selTarget"></select><button id="btnRefreshTargets" class="ghost">刷新</button></div>
+    </div>
+
+    <div class="group">
+      <div class="gTitle">② 会议文字来源</div>
+      <div class="row seg" id="sourceSeg">
+        <button data-source="ocr">读飞书字幕（OCR）</button>
+        <button data-source="cicada">读知了 Cicada 转写</button>
+      </div>
+      <div id="ocrBox">
+        <div class="row"><label>飞书窗口</label><select id="selWindow"></select><button id="btnRefreshWin" class="ghost">刷新</button></div>
+        <div class="row"><button id="btnRegion">框选字幕区域</button><span id="regionState" class="muted"></span></div>
+        <div class="row"><span id="permState" class="muted"></span><span class="spacer"></span><button id="btnPerm" class="ghost">请求屏幕录制权限</button></div>
+        <div class="hint">会中在飞书打开「字幕」，最好展开字幕记录面板，再框选那一块。只读这块区域的文字，不录音、不录屏保存。</div>
+      </div>
+      <div id="cicadaBox" hidden>
+        <div class="hint">先在知了里开始收听本场会议；这里只读取知了本机保存的实时记录（~/Library/Application Support/LiveSubs）。</div>
+        <div class="row"><span id="cicadaState" class="muted"></span></div>
+      </div>
+    </div>
+
+    <div class="group">
+      <div class="gTitle">③ 本场</div>
+      <div class="row"><button id="btnStart" class="primary">开始本场</button><button id="btnEnd">结束本场</button><span id="ocrState" class="muted"></span></div>
+      <div id="recent" class="recent"></div>
+      <div class="row"><textarea id="manual" rows="2" placeholder="读不到字幕时，把关键的话粘贴在这里，加入本场上下文"></textarea><button id="btnManual" class="ghost">加入</button></div>
+      <div class="row"><label class="check"><input type="checkbox" id="chkShare"> 共享屏幕时对方看不到浮窗</label></div>
+    </div>
+
+    <div class="group">
+      <div class="gTitle">快捷键</div>
+      <div id="keys" class="keys"></div>
+      <div class="row"><button id="btnKeyTest">按键测试</button><span class="muted">按快捷键只提示，不发送</span></div>
+      <div class="row"><span class="spacer"></span><button id="btnQuit" class="ghost danger">退出</button></div>
+    </div>
+  </section>
+  </div>
+</div>
+<script src="overlay.js"></script>
+</body>
+</html>

@@ -1,0 +1,65 @@
+{
+  "schemaVersion": 3,
+  "minCindyVersion": "0.1.129",
+  "id": "meeting-partner-bridge",
+  "name": "MeetCue 会议提词",
+  "description": "MeetCue 会中提词的 Cindy 连接：会议中按快捷键，把最近的会议文字发给你选定的伙伴，伙伴结合自己的记忆回答，答案显示在本机 MeetCue 浮窗。只在你按键时发送，不录音、不读取其他聊天。",
+  "whenToUse": "会中提词、MeetCue 快捷键向伙伴提问、回传会中建议",
+  "version": "1.2.0",
+  "kind": "chip",
+  "entry": "main.js",
+  "tools": [
+    {
+      "name": "bridge_status",
+      "description": "检查会议本机桥接和可选伙伴名单。只返回状态和名单，不返回凭据或聊天历史。",
+      "parameters": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "deliver_advice",
+      "description": "把当前伙伴对指定会议请求的简短建议回传本机提词浮窗。仅用于收到带 request_id 的会议提词请求；请求号须原样使用，answer 为实际建议。宿主会话身份必须与接收请求的伙伴一致，不能替其他伙伴交付。",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "request_id": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "answer": {
+            "type": "string",
+            "maxLength": 8000
+          }
+        },
+        "required": [
+          "request_id",
+          "answer"
+        ],
+        "additionalProperties": false
+      }
+    }
+  ],
+  "node": {
+    "entry": "node/worker.cjs",
+    "protocol": "json-rpc-stdio",
+    "lifecycle": "resident"
+  },
+  "command": "meeting-partner",
+  "launch": "resident",
+  "confirm": true,
+  "sessionContext": true,
+  "agent": {
+    "tasks": true,
+    "targets": true
+  },
+  "showTaskPreferences": false,
+  "mainView": {
+    "title": "MeetCue 连接",
+    "icon": "message-circle",
+    "html": "main-view.html",
+    "open": "page"
+  },
+  "releaseNotes": "改名为 MeetCue；连接页文案更新为 MeetCue 浮窗。"
+}

@@ -1,0 +1,10 @@
+MeetCue
+Copyright 2026 MeetCue contributors
+
+This product is licensed under the Apache License, Version 2.0.
+
+The floating-window look is inspired by Natively (https://github.com/Natively-AI-assistant/natively-cluely-ai-assistant).
+No Natively source code is included.
+
+The optional Cicada transcript source reads the local session files written by
+Cicada (https://github.com/wquguru/cicada, Apache-2.0). No Cicada source code is included.
